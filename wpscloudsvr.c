@@ -77,13 +77,12 @@ void killer(int argc, char **argv) {
     AppIndicator *indicator;
     GError *error = NULL;
 
-    const static GtkActionEntry entries[] = {
+    GtkActionEntry const entries[] = {
     { "Quit",     "application-exit", "_退出", "<control>Q",
         "Exit the application", G_CALLBACK (kill_wpscloudsvr_callback) },
     };
-    const static guint n_entries = G_N_ELEMENTS (entries);
-
-    const static gchar *ui_info =
+    guint const n_entries = G_N_ELEMENTS (entries);
+    gchar const *const restrict ui_info =
     "<ui>"
     "  <popup name='IndicatorPopup'>"
     "    <menuitem action='Quit' />"
