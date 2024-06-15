@@ -3,10 +3,11 @@ LIBS := gtk+-3.0 appindicator3-0.1
 CFLAGS += -Wall -Wextra -Wno-deprecated-declarations
 CFLAGS += $(shell pkgconf --cflags ${LIBS})
 LDFLAGS += $(shell pkgconf --libs ${LIBS})
-INSTALL_PATH := ${DESTDIR}/opt/kingsoft/wps-office/office6/wpscloudsvr
+SVR_PATH ?= /opt/kingsoft/wps-office/office6/wpscloudsvr
+INSTALL_PATH ?= ${DESTDIR}${SVR_PATH}
 
 ${BINARY}: ${BINARY}.c
-	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
+	${CC} ${CFLAGS} ${LDFLAGS} -DSVR_PATH=\"${SVR_PATH}\"  -o $@ $^
 
 clean:
 	rm -f ${BINARY}

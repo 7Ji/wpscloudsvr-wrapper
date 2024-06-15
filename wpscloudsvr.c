@@ -7,7 +7,10 @@
 #include <glib.h>
 #include <libappindicator/app-indicator.h>
 
-#define REALPATH "/opt/kingsoft/wps-office/office6/wpscloudsvr.real"
+#ifndef SVR_PATH
+#define SVR_PATH  "/opt/kingsoft/wps-office/office6/wpscloudsvr"
+#endif
+#define REAL_PATH SVR_PATH".real"
 
 #define println(format, arg...) printf(format"\n", ##arg)
 #define println_with_errno(format, arg...) \
@@ -21,6 +24,8 @@ int kill_wpscloudsvr() {
     pid_t waited;
     const int signals[] = {SIGINT, SIGTERM, SIGKILL};
 
+    // In theory we can just quit and let the reaper handle wpscloudsvr, but 
+    // let's be a good parent and kill wpscloudsvr nicely by outselves
     if (wpscloudsvr == 0) {
         println("WPS cloud srv was not started, this is impossible");
         return -1;
@@ -61,8 +66,9 @@ int kill_wpscloudsvr() {
 
 static void kill_wpscloudsvr_callback(GtkAction *action) {
     (void) action;
+    int r = kill_wpscloudsvr();
     gtk_main_quit();
-    if (kill_wpscloudsvr()) {
+    if (r) {
         exit(EXIT_FAILURE);
     } else {
         exit(EXIT_SUCCESS);
@@ -119,7 +125,7 @@ void killer(int argc, char **argv) {
     app_indicator_set_title(indicator, "WPS 云同步服务");
     app_indicator_set_icon(indicator, "cloud-upload-symbolic");
     app_indicator_set_menu (indicator, GTK_MENU (indicator_menu));
-    gtk_main ();
+    gtk_main();
 }
 
 int main (int argc, char **argv) {
@@ -134,15 +140,15 @@ int main (int argc, char **argv) {
         wpscloudsvr = fork();
         if (wpscloudsvr > 0) { // parent
             killer(argc, argv);
-            return main_r;
+            println("Killer returned, this should not happen");
         } else if (wpscloudsvr == 0) { // child
-            execv(REALPATH, argv);
+            execv(REAL_PATH, argv);
             println_with_errno("Failed to exec wps cloudsrv (daemon)");
         } else {
             println_with_errno("Failed to fork");
         }
     } else {
-        execv(REALPATH, argv);
+        execv(REAL_PATH, argv);
         println_with_errno("Failed to exec wps cloudsrv (non-daemon)");
     }
     return -1;
