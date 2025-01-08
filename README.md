@@ -10,7 +10,12 @@ Needs the following dependencies:
 
 Run the following command to build:
 ```
-make
+make fresh
+```
+
+If the `wpscloudsvr` binary lives in a different location other than the default `/opt/kingsoft/wps-office/office6/wpscloudsvr`, define it explicitly, e.g. for `wps-office-cn` it shall be `/usr/lib/office6/wpscloudsvr`:
+```
+make fresh SVR_PATH=/usr/lib/office6/wpscloudsvr
 ```
 
 ## Install
