@@ -12,6 +12,8 @@ ${BINARY}: ${BINARY}.c
 clean:
 	rm -f ${BINARY}
 
+fresh: | clean ${BINARY}
+
 install: ${BINARY}
 ifeq ("$(wildcard ${INSTALL_PATH}.real)", "")
 	mv ${INSTALL_PATH} ${INSTALL_PATH}.real
